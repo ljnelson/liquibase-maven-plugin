@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <FindBugsFilter>
   <Match>
+    <Class name="com.edugility.liquibase.maven.HelpMojo"/>
+  </Match>
+  <Match>
     <Class name="com.edugility.liquibase.maven.TemplateOutputWriter"/>
     <Method name="toString"/>
     <Bug pattern="NP_TOSTRING_COULD_RETURN_NULL"/>

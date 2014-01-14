@@ -141,34 +141,72 @@ public class AssembleChangeLogMojo extends AbstractLiquibaseMojo {
   private ArtifactFilter artifactFilter;
 
   /**
-   *
+   * A list of classpath resource names that identity <a
+   * href="http://liquibase.org/">Liquibase</a> changelogs; {@code
+   * META-INF/liquibase/changelog.xml} by default.
    */
   @Parameter(defaultValue = "META-INF/liquibase/changelog.xml", required = true)
   private List<String> changeLogResourceNames;
 
+  /**
+   * The classpath resource name of the <a
+   * href="http://mvel.codehaus.org/">MVEL</a> template that will be
+   * used to aggregate all the changelog fragments together; {@code
+   * changelog-template.mvl} by default; typically found within this
+   * plugin's own {@code .jar} file, but users may wish to supply an
+   * alternate template.
+   */
   @Parameter(defaultValue = "changelog-template.mvl", required = true)
   private String changeLogTemplateResourceName;
 
+  /**
+   * The full path to the changelog that will be generated;
+   * <code>${project.build.directory}/generated-sources/liquibase/changelog.xml</code>
+   * by default.
+   */
   @Parameter(defaultValue = "${project.build.directory}/generated-sources/liquibase/changelog.xml", required = true)
   private File outputFile;
 
+  /**
+   * The version of the proper XSD file to use that defines the
+   * contents of a <a href="http://liquibase.org/">Liquibase</a>
+   * changelog file; {@code 3.0} by default.
+   */
   @Parameter(defaultValue = "3.0", required = true)
   private String databaseChangeLogXsdVersion;
 
+  /**
+   * A set of {@link Properties} defining changelog parameters; {@code
+   * null} by default.
+   */
   @Parameter
   private Properties changeLogParameters;
 
+  /**
+   * The character encoding to use while reading in the changelog <a
+   * href="http://mvel.codehaus.org/">MVEL</a> template;
+   * <code>${project.build.sourceEncoding}</code> by default.
+   */
   @Parameter(required = true, defaultValue = "${project.build.sourceEncoding}")
   private String templateCharacterEncoding;
 
+  /**
+   * The character encoding to use while writing the generated
+   * changelog; <code>${project.build.sourceEncoding}</code> by
+   * default.
+   */
   @Parameter(required = true, defaultValue = "${project.build.sourceEncoding}")
   private String changelogCharacterEncoding;
+
 
   /*
    * Constructors.
    */
 
 
+  /**
+   * Creates a new {@link AssembleChangeLogMojo}.
+   */
   public AssembleChangeLogMojo() {
     super();
   }
@@ -179,6 +217,9 @@ public class AssembleChangeLogMojo extends AbstractLiquibaseMojo {
    */
 
 
+  /**
+   * 
+   */
   @Override
   public void execute() throws MojoExecutionException, MojoFailureException {
     if (!this.getSkip()) {
