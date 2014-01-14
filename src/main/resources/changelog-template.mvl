@@ -1,0 +1,7 @@
+<?xml version="1.0" ?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-@{databaseChangeLogXsdVersion}.xsd">
+@if{isdef changeLogParameters && changeLogParameters != null && !changeLogParameters.isEmpty()}@foreach{propertyName : java.util.Collections.list(changeLogParameters.propertyNames())}@code{value = changeLogParameters.getProperty(propertyName)}@if{value != null}  <property name="@{propertyName}" value="@{value}"/>
+@end{}@end{}@end{}
+@if{isdef resources && resources != null && !resources.isEmpty()}@foreach{url : resources}  <include file="@{url}"/>
+@end{}@end{}
+</databaseChangeLog>

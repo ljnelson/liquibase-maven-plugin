@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="utf-8"?><!-- $Id: pom.xml 336 2011-02-26 22:20:22Z ljnelson $ -->
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:Xlint="urn:javac" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <prerequisites>
+    <maven>3.0.5</maven>
+  </prerequisites>
+
+  <groupId>com.edugility</groupId>
+  <artifactId>liquibase-maven-plugin</artifactId>
+  <version>1.0.0-SNAPSHOT</version>
+  <packaging>maven-plugin</packaging>
+
+  <parent>
+    <groupId>com.edugility</groupId>
+    <artifactId>edugility-oss-pluginmanagement-pom</artifactId>
+    <version>2</version>
+  </parent>
+
+  <name>Liquibase Maven Plugin</name>
+  <description>Liquibase Maven Plugin</description>
+  <inceptionYear>2013</inceptionYear>
+  <url>http://ljnelson.github.com/${project.artifactId}/</url>
+
+  <scm>
+    <connection>scm:git:git@github.com:ljnelson/${project.artifactId}.git</connection>
+    <developerConnection>scm:git:git@github.com:ljnelson/${project.artifactId}.git</developerConnection>
+    <url>https://github.com/ljnelson/${project.artifactId}/</url>
+  </scm>
+
+  <dependencies>
+
+    <dependency>
+      <groupId>com.edugility</groupId>
+      <artifactId>maven-artifacts</artifactId>
+      <version>1.0.0-SNAPSHOT</version>
+      <scope>compile</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.liquibase</groupId>
+      <artifactId>liquibase-core</artifactId>
+      <version>3.0.8</version>
+      <scope>compile</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.mvel</groupId>
+      <artifactId>mvel2</artifactId>
+      <version>2.1.3.Final</version>
+      <scope>compile</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.apache.maven.plugin-tools</groupId>
+      <artifactId>maven-plugin-annotations</artifactId>
+      <version>3.2</version>
+      <scope>provided</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>com.h2database</groupId>
+      <artifactId>h2</artifactId>
+      <version>1.3.174</version>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <scope>test</scope>
+    </dependency>
+
+  </dependencies>
+
+  <build>
+
+    <pluginManagement>
+      <plugins>
+
+        <plugin>
+          <artifactId>maven-surefire-plugin</artifactId>
+          <configuration>
+            <systemPropertyVariables>
+              <testEclipseLinkLogging>${testEclipseLinkLogging}</testEclipseLinkLogging>
+              <testDatabaseConnectionURL>${testDatabaseConnectionURL}</testDatabaseConnectionURL>
+              <testDatabasePassword>${testDatabasePassword}</testDatabasePassword>
+              <testDatabaseUser>${testDatabaseUser}</testDatabaseUser>
+            </systemPropertyVariables>
+          </configuration>
+        </plugin>
+
+      </plugins>
+    </pluginManagement>
+
+    <plugins>
+
+      <plugin>
+        <groupId>com.github.github</groupId>
+        <artifactId>site-maven-plugin</artifactId>
+      </plugin>
+
+      <plugin>
+        <artifactId>maven-plugin-plugin</artifactId>
+        <version>3.2</version>
+        <executions>
+          <execution>
+            <id>default-descriptor</id>
+            <goals>
+              <goal>descriptor</goal>
+            </goals>
+            <phase>process-classes</phase>
+          </execution>
+          <execution>
+            <id>help-descriptor</id>
+            <goals>
+              <goal>helpmojo</goal>
+            </goals>
+            <phase>process-classes</phase>
+          </execution>
+        </executions>
+      </plugin>
+
+    </plugins>
+
+    <testResources>
+      <testResource>
+        <filtering>true</filtering>
+        <directory>src/test/resources</directory>
+      </testResource>
+    </testResources>
+
+  </build>
+
+  <properties>
+
+    <testDatabaseConnectionURL>jdbc:h2:mem:test</testDatabaseConnectionURL>
+    <testDatabasePassword/>
+    <testDatabaseUser>sa</testDatabaseUser>
+    <testEclipseLinkLogging>finer</testEclipseLinkLogging>
+
+    <!-- maven-compiler-plugin properties -->
+    <maven.compiler.source>1.6</maven.compiler.source>
+    <maven.compiler.target>1.6</maven.compiler.target>
+
+    <!-- maven-javadoc-plugin properties -->
+    <links>http://mvel.codehaus.org/javadoc/2.0/,http://junit.org/javadoc/4.10/</links>
+    <stylesheetfile>css/styles.css</stylesheetfile>
+
+  </properties>
+
+  <reporting>
+    <plugins>
+
+      <plugin>
+        <artifactId>maven-plugin-plugin</artifactId>
+        <version>3.2</version>
+      </plugin>
+
+      <plugin>
+        <artifactId>maven-javadoc-plugin</artifactId>
+        <version>${mavenJavadocPluginVersion}</version>
+      </plugin>
+
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>findbugs-maven-plugin</artifactId>
+        <version>2.5.3</version>
+        <configuration>
+          <excludeFilterFile>${basedir}/src/findbugs/exclude.xml</excludeFilterFile>
+        </configuration>
+      </plugin>
+
+    </plugins>
+  </reporting>
+
+</project>
