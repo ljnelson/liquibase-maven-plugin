@@ -156,7 +156,7 @@ public class AssembleChangeLogMojo extends AbstractLiquibaseMojo {
    * plugin's own {@code .jar} file, but users may wish to supply an
    * alternate template.
    */
-  @Parameter(defaultValue = "changelog-template.mvl", required = true)
+  @Parameter
   private String changeLogTemplateResourceName;
 
   /**
@@ -176,8 +176,9 @@ public class AssembleChangeLogMojo extends AbstractLiquibaseMojo {
   private String databaseChangeLogXsdVersion;
 
   /**
-   * A set of {@link Properties} defining changelog parameters; {@code
-   * null} by default.
+   * A set of {@link Properties} defining <a
+   * href="http://www.liquibase.org/documentation/changelog_parameters.html">changelog
+   * parameters</a>; {@code null} by default.
    */
   @Parameter
   private Properties changeLogParameters;
@@ -218,11 +219,59 @@ public class AssembleChangeLogMojo extends AbstractLiquibaseMojo {
 
 
   /**
+   * Executes this {@link AssembleChangeLogMojo}.
+   *
+   * <p>This method:</p>
+   *
+   * <ul>
+   *
+   * <li>{@linkplain #getChangeLogTemplateResource() Verifies that
+   * there is a template} that exists either in the {@linkplain
+   * #getProject() project} or (more commonly) in this plugin</li>
+   *
+   * <li>Verifies that the template can be read and has contents</li>
+   *
+   * <li>{@linkplain
+   * Artifacts#getArtifactsInTopologicalOrder(MavenProject,
+   * DependencyGraphBuilder, ArtifactFilter, ArtifactResolver,
+   * ArtifactRepository) Retrieves and resolves the project's
+   * dependencies and sorts them in topological order} from the
+   * artifact with the least dependencies to {@linkplain #getProject()
+   * the current project} (which by definition has the most
+   * dependencies)</li>
+   *
+   * <li>Builds a {@link ClassLoader} that can "see" the {@linkplain
+   * Artifact#getFile() <code>File</code>s associated with those
+   * <code>Artifact</code>s} and uses it to {@linkplain
+   * ClassLoader#getResources(String) find} the {@linkplain
+   * #getChangeLogResourceNames() specified changelog resources}</li>
    * 
+   * <li>Passes a {@link Collection} of {@link URL}s representing (in
+   * most cases) {@code file:} or {@code jar:} {@link URL}s through
+   * the {@linkplain TemplateRuntime MVEL template engine}, thus
+   * merging the template and the {@link URL}s into an aggregating
+   * changelog</li>
+   *
+   * <li>{@linkplain #write(String, Collection, File) Writes} the
+   * resulting changelog to the destination denoted by the {@link
+   * #getOutputFile() outputFile} parameter</li>
+   * 
+   * </ul>
+   *
+   * @exception MojoFailureException if an error occurs; under normal
+   * circumstances this goal will not fail so this method does not
+   * throw {@link MojoExecutionException}
+   *
+   * @see #write()
    */
   @Override
-  public void execute() throws MojoExecutionException, MojoFailureException {
-    if (!this.getSkip()) {
+  public void execute() throws MojoFailureException {
+    if (this.getSkip()) {
+      final Log log = this.getLog();
+      if (log != null && log.isDebugEnabled()) {
+        log.debug("Skipping execution");
+      }
+    } else {
       try {
         this.write();
       } catch (final RuntimeException e) {
@@ -237,18 +286,62 @@ public class AssembleChangeLogMojo extends AbstractLiquibaseMojo {
     }
   }
 
+  /**
+   * Returns {@code true} if the {@link #execute()} method should take
+   * no action.
+   *
+   * @return {@code true} if the {@link #execute()} method should take
+   * no action; {@code false} otherwise
+   *
+   * @see #setSkip(boolean)
+   */
   public boolean getSkip() {
     return this.skip;
   }
 
+  /**
+   * Sets whether the {@link #execute()} method will take any action.
+   *
+   * @param skip if {@code true}, then the {@link #execute()} method
+   * will take no action
+   *
+   * @see #getSkip()
+   */
   public void setSkip(final boolean skip) {
     this.skip = skip;
   }
 
+  /**
+   * Returns the {@link ArtifactRepository} that represents the
+   * current local Maven repository.  This method may return {@code
+   * null}.
+   *
+   * <p>This method may return {@code null}.</p>
+   *
+   * @return an {@link ArtifactRepository}, or {@code null}
+   *
+   * @see #setLocalRepository(ArtifactRepository)
+   */
   public ArtifactRepository getLocalRepository() {
     return this.localRepository;
   }
 
+  /**
+   * Sets the {@link ArtifactRepository} to be used as the current
+   * local Maven repository.
+   *
+   * <p>This method is normally used for testing and mocking purposes
+   * only.</p>
+   *
+   * @param localRepository the {@link ArtifactRepository}
+   * representing the current local Maven repository; must not be
+   * {@code null}
+   *
+   * @exception IllegalArgumentException if {@code localRepository} is
+   * {@code null}
+   *
+   * @see #getLocalRepository()
+   */
   public void setLocalRepository(final ArtifactRepository localRepository) {
     if (localRepository == null) {
       throw new IllegalArgumentException("localRepository", new NullPointerException("localRepository"));
@@ -280,14 +373,23 @@ public class AssembleChangeLogMojo extends AbstractLiquibaseMojo {
     this.changeLogResourceNames = changeLogResourceNames;
   }
 
+  public String getChangeLogTemplateResourceName() {
+    return this.changeLogTemplateResourceName;
+  }
+
+  public void setChangeLogTemplateResourceName(final String name) {
+    this.changeLogTemplateResourceName = name;
+  }
+
   public URL getChangeLogTemplateResource() {
+    final String changeLogTemplateResourceName = this.getChangeLogTemplateResourceName();
     final String resourceName;
     final ClassLoader loader;
-    if (this.changeLogTemplateResourceName == null) {
+    if (changeLogTemplateResourceName == null) {
       resourceName = "changelog-template.mvl";
       loader = this.getClass().getClassLoader();
     } else {
-      resourceName = this.changeLogTemplateResourceName;
+      resourceName = changeLogTemplateResourceName;
       loader = Thread.currentThread().getContextClassLoader();
     }
     URL resource = null;
@@ -353,11 +455,7 @@ public class AssembleChangeLogMojo extends AbstractLiquibaseMojo {
     }
   }
 
-  public void write() throws ArtifactResolutionException, DependencyGraphBuilderException, IOException {
-    final MavenProject project = this.getProject();
-    if (project == null) {
-      throw new IllegalStateException("this.getProject()", new NullPointerException("this.getProject()"));
-    }
+  public final void write() throws ArtifactResolutionException, DependencyGraphBuilderException, IOException {
     final URL changeLogTemplateResource = this.getChangeLogTemplateResource();
     if (changeLogTemplateResource != null) {
       final String templateContents = this.readTemplate(changeLogTemplateResource);
@@ -400,7 +498,7 @@ public class AssembleChangeLogMojo extends AbstractLiquibaseMojo {
     this.dependencyGraphBuilder = dependencyGraphBuilder;
   }
 
-  private final Collection<? extends URL> getChangeLogResources() throws ArtifactResolutionException, DependencyGraphBuilderException, IOException {
+  public final Collection<? extends URL> getChangeLogResources() throws ArtifactResolutionException, DependencyGraphBuilderException, IOException {
     final MavenProject project = this.getProject();
     if (project == null) {
       throw new IllegalStateException("this.getProject()", new NullPointerException("this.getProject()"));
@@ -421,7 +519,7 @@ public class AssembleChangeLogMojo extends AbstractLiquibaseMojo {
     return urls;
   }
 
-  private final Collection<? extends URL> getChangeLogResources(final Iterable<? extends Artifact> artifacts) throws IOException {
+  public Collection<? extends URL> getChangeLogResources(final Iterable<? extends Artifact> artifacts) throws IOException {
     Collection<URL> returnValue = null;
     final ClassLoader loader = this.toClassLoader(artifacts);
     if (loader != null) {

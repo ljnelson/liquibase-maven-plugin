@@ -1,0 +1,22 @@
+<!-- -*- markdown -*- -->
+# Introduction
+
+Welcome to the `${project.artifactId}` project.
+`${project.artifactId}` is a [Maven][1] [plugin][2] that provides
+goals for working with [Liquibase][3].
+
+# Goals
+
+The best way to see what this plugin exposes is to look at the
+[goals][4] page.
+
+# API Documentation
+
+The API is fully documented.  Please see the [API documentation][5] to
+get started.
+
+[1]: http://maven.apache.org/
+[2]: http://maven.apache.org/guides/introduction/introduction-to-the-lifecycle.html#Plugins
+[3]: http://www.liquibase.org/
+[4]: plugin-info.html
+[5]: apidocs/index.html

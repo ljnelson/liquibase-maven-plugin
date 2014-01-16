@@ -3,7 +3,7 @@
   <modelVersion>4.0.0</modelVersion>
 
   <prerequisites>
-    <maven>3.0.5</maven>
+    <maven>${mavenVersion}</maven>
   </prerequisites>
 
   <groupId>com.edugility</groupId>
@@ -33,7 +33,7 @@
     <dependency>
       <groupId>com.edugility</groupId>
       <artifactId>maven-artifacts</artifactId>
-      <version>1.0.0-SNAPSHOT</version>
+      <version>1.0.0</version>
       <scope>compile</scope>
     </dependency>
 
@@ -133,6 +133,7 @@
   </build>
 
   <properties>
+    <mavenVersion>3.0.5</mavenVersion>
 
     <testDatabaseConnectionURL>jdbc:h2:mem:test</testDatabaseConnectionURL>
     <testDatabasePassword/>
@@ -144,7 +145,7 @@
     <maven.compiler.target>1.6</maven.compiler.target>
 
     <!-- maven-javadoc-plugin properties -->
-    <links>http://mvel.codehaus.org/javadoc/2.0/,http://junit.org/javadoc/4.10/</links>
+    <links>http://mvel.codehaus.org/javadoc/2.0/,http://junit.org/javadoc/4.10/,http://maven.apache.org/ref/${mavenVersion}/apidocs/,http://ljnelson.github.io/maven-artifacts/apidocs/</links>
     <stylesheetfile>css/styles.css</stylesheetfile>
 
   </properties>
