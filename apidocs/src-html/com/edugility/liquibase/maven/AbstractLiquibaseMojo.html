@@ -36,24 +36,66 @@
 <FONT color="green">033</FONT>    <a name="line.33"></a>
 <FONT color="green">034</FONT>    import org.apache.maven.project.MavenProject;<a name="line.34"></a>
 <FONT color="green">035</FONT>    <a name="line.35"></a>
-<FONT color="green">036</FONT>    public abstract class AbstractLiquibaseMojo extends AbstractMojo {<a name="line.36"></a>
-<FONT color="green">037</FONT>    <a name="line.37"></a>
-<FONT color="green">038</FONT>      @Component<a name="line.38"></a>
-<FONT color="green">039</FONT>      private MavenProject project;<a name="line.39"></a>
-<FONT color="green">040</FONT>    <a name="line.40"></a>
-<FONT color="green">041</FONT>      protected AbstractLiquibaseMojo() {<a name="line.41"></a>
-<FONT color="green">042</FONT>        super();<a name="line.42"></a>
-<FONT color="green">043</FONT>      }<a name="line.43"></a>
-<FONT color="green">044</FONT>    <a name="line.44"></a>
-<FONT color="green">045</FONT>      public MavenProject getProject() {<a name="line.45"></a>
-<FONT color="green">046</FONT>        return this.project;<a name="line.46"></a>
-<FONT color="green">047</FONT>      }<a name="line.47"></a>
+<FONT color="green">036</FONT>    /**<a name="line.36"></a>
+<FONT color="green">037</FONT>     * An {@link AbstractMojo} housing &lt;a<a name="line.37"></a>
+<FONT color="green">038</FONT>     * href="http://www.liquibase.org/"&gt;Liquibase&lt;/a&gt; functionality.<a name="line.38"></a>
+<FONT color="green">039</FONT>     *<a name="line.39"></a>
+<FONT color="green">040</FONT>     * @author &lt;a href="http://about.me/lairdnelson"<a name="line.40"></a>
+<FONT color="green">041</FONT>     * target="_parent"&gt;Laird Nelson&lt;/a&gt;<a name="line.41"></a>
+<FONT color="green">042</FONT>     *<a name="line.42"></a>
+<FONT color="green">043</FONT>     * @see AbstractMojo<a name="line.43"></a>
+<FONT color="green">044</FONT>     *<a name="line.44"></a>
+<FONT color="green">045</FONT>     * @see &lt;a href="http://www.liquibase.org/"&gt;Liquibase&lt;/a&gt;<a name="line.45"></a>
+<FONT color="green">046</FONT>     */<a name="line.46"></a>
+<FONT color="green">047</FONT>    public abstract class AbstractLiquibaseMojo extends AbstractMojo {<a name="line.47"></a>
 <FONT color="green">048</FONT>    <a name="line.48"></a>
-<FONT color="green">049</FONT>      public void setProject(final MavenProject project) {<a name="line.49"></a>
-<FONT color="green">050</FONT>        this.project = project;<a name="line.50"></a>
-<FONT color="green">051</FONT>      }<a name="line.51"></a>
-<FONT color="green">052</FONT>    <a name="line.52"></a>
-<FONT color="green">053</FONT>    }<a name="line.53"></a>
+<FONT color="green">049</FONT>      /**<a name="line.49"></a>
+<FONT color="green">050</FONT>       * The {@link MavenProject} currently in effect.<a name="line.50"></a>
+<FONT color="green">051</FONT>       *<a name="line.51"></a>
+<FONT color="green">052</FONT>       * &lt;p&gt;This field may be {@code null}.&lt;/p&gt;<a name="line.52"></a>
+<FONT color="green">053</FONT>       *<a name="line.53"></a>
+<FONT color="green">054</FONT>       * @see #getProject()<a name="line.54"></a>
+<FONT color="green">055</FONT>       *<a name="line.55"></a>
+<FONT color="green">056</FONT>       * @see #setProject(MavenProject)<a name="line.56"></a>
+<FONT color="green">057</FONT>       */<a name="line.57"></a>
+<FONT color="green">058</FONT>      @Component<a name="line.58"></a>
+<FONT color="green">059</FONT>      private MavenProject project;<a name="line.59"></a>
+<FONT color="green">060</FONT>    <a name="line.60"></a>
+<FONT color="green">061</FONT>      /**<a name="line.61"></a>
+<FONT color="green">062</FONT>       * Creates a new {@link AbstractLiquibaseMojo}.<a name="line.62"></a>
+<FONT color="green">063</FONT>       */<a name="line.63"></a>
+<FONT color="green">064</FONT>      protected AbstractLiquibaseMojo() {<a name="line.64"></a>
+<FONT color="green">065</FONT>        super();<a name="line.65"></a>
+<FONT color="green">066</FONT>      }<a name="line.66"></a>
+<FONT color="green">067</FONT>    <a name="line.67"></a>
+<FONT color="green">068</FONT>      /**<a name="line.68"></a>
+<FONT color="green">069</FONT>       * Returns the {@link MavenProject} affiliated with this {@link<a name="line.69"></a>
+<FONT color="green">070</FONT>       * AbstractLiquibaseMojo}.<a name="line.70"></a>
+<FONT color="green">071</FONT>       *<a name="line.71"></a>
+<FONT color="green">072</FONT>       * &lt;p&gt;This method may return {@code null}.&lt;/p&gt;<a name="line.72"></a>
+<FONT color="green">073</FONT>       *<a name="line.73"></a>
+<FONT color="green">074</FONT>       * @return a {@link MavenProject}, or {@code null}<a name="line.74"></a>
+<FONT color="green">075</FONT>       *<a name="line.75"></a>
+<FONT color="green">076</FONT>       * @see #setProject(MavenProject)<a name="line.76"></a>
+<FONT color="green">077</FONT>       */<a name="line.77"></a>
+<FONT color="green">078</FONT>      public MavenProject getProject() {<a name="line.78"></a>
+<FONT color="green">079</FONT>        return this.project;<a name="line.79"></a>
+<FONT color="green">080</FONT>      }<a name="line.80"></a>
+<FONT color="green">081</FONT>    <a name="line.81"></a>
+<FONT color="green">082</FONT>      /**<a name="line.82"></a>
+<FONT color="green">083</FONT>       * Affiliates the supplied {@link MavenProject} with this {@link<a name="line.83"></a>
+<FONT color="green">084</FONT>       * AbstractLiquibaseMojo}.<a name="line.84"></a>
+<FONT color="green">085</FONT>       *<a name="line.85"></a>
+<FONT color="green">086</FONT>       * @param project the {@link MavenProject} to affiliate; may be<a name="line.86"></a>
+<FONT color="green">087</FONT>       * {@code null}<a name="line.87"></a>
+<FONT color="green">088</FONT>       *<a name="line.88"></a>
+<FONT color="green">089</FONT>       * @see #getProject()<a name="line.89"></a>
+<FONT color="green">090</FONT>       */<a name="line.90"></a>
+<FONT color="green">091</FONT>      public void setProject(final MavenProject project) {<a name="line.91"></a>
+<FONT color="green">092</FONT>        this.project = project;<a name="line.92"></a>
+<FONT color="green">093</FONT>      }<a name="line.93"></a>
+<FONT color="green">094</FONT>    <a name="line.94"></a>
+<FONT color="green">095</FONT>    }<a name="line.95"></a>
 
 
 
