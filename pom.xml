@@ -145,7 +145,7 @@
     <maven.compiler.target>1.6</maven.compiler.target>
 
     <!-- maven-javadoc-plugin properties -->
-    <links>http://mvel.codehaus.org/javadoc/2.0/,http://junit.org/javadoc/4.10/,http://maven.apache.org/ref/${mavenVersion}/apidocs/,http://ljnelson.github.io/maven-artifacts/apidocs/</links>
+    <links>http://mvel.codehaus.org/javadoc/2.0/,http://junit.org/javadoc/4.10/,http://maven.apache.org/shared/maven-dependency-tree/apidocs/,http://maven.apache.org/ref/${mavenVersion}/apidocs/,http://ljnelson.github.io/maven-artifacts/apidocs/</links>
     <stylesheetfile>css/styles.css</stylesheetfile>
 
   </properties>

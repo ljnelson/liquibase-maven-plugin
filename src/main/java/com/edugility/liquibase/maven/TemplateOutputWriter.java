@@ -32,10 +32,48 @@ import java.io.Writer;
 
 import org.mvel2.templates.util.TemplateOutputStream;
 
+import org.mvel2.templates.util.io.StandardOutputStream; // for javadoc only
+
+/**
+ * A {@link TemplateOutputStream} that delegates to a {@link Writer}.
+ *
+ * <h3>Design Notes</h3>
+ *
+ * <p>The <a href="http://mvel.codehaus.org/">MVEL</a> project's
+ * {@link TemplateOutputStream} class is really a {@code char}-based
+ * construct, and hence has semantics very close to the {@link Writer}
+ * class, despite the fact that it sounds by convention like it should
+ * work with {@code byte} streams.</p>
+ *
+ * @author <a href="http://about.me/lairdnelson"
+ * target="_parent">Laird Nelson</a>
+ *
+ * @see TemplateOutputStream
+ *
+ * @see Writer
+ */
 public class TemplateOutputWriter implements TemplateOutputStream {
 
+  /**
+   * The {@link Writer} instance to which all work is delegated.
+   *
+   * <p>This field is never {@code null}.</p>
+   *
+   * @see #TemplateOutputWriter(Writer)
+   */
   private final Writer delegate;
 
+  /**
+   * Creates a new {@link TemplateOutputWriter}.
+   *
+   * @param delegate the {@link Writer} to which all operations will
+   * be delegated; must not be {@code null}.  This {@link Writer} is
+   * never {@linkplain Writer#close() closed} by any of this {@link
+   * TemplateOutputWriter}'s operations.
+   *
+   * @exception IllegalArgumentException if {@code delegate} is {@code
+   * null}
+   */
   public TemplateOutputWriter(final Writer delegate) {
     super();
     if (delegate == null) {
@@ -44,6 +82,27 @@ public class TemplateOutputWriter implements TemplateOutputStream {
     this.delegate = delegate;
   }
 
+  /**
+   * {@linkplain Writer#append(CharSequence) Appends} the supplied
+   * {@link CharSequence} to the {@link Writer} supplied {@linkplain
+   * #TemplateOutputWriter(Writer) at construction time} and returns
+   * this {@link TemplateOutputWriter}.
+   *
+   * <p>This method never returns {@code null}.</p>
+   *
+   * @param c the {@link CharSequence} in question; may be {@code
+   * null} in which case "{@code null}" is appended instead
+   *
+   * @return this {@link TemplateOutputWriter}; never {@code null}
+   *
+   * @exception RuntimeException if any underlying {@link IOException}
+   * is thrown in keeping with the somewhat questionable design of
+   * {@link TemplateOutputStream}; examine its {@linkplain
+   * Throwable#getCause() root cause} for the causing {@link
+   * IOException}
+   *
+   * @see Writer#append(CharSequence)
+   */
   @Override
   public TemplateOutputStream append(final CharSequence c) {
     try {
@@ -58,6 +117,26 @@ public class TemplateOutputWriter implements TemplateOutputStream {
     return this;
   }
 
+  /**
+   * {@linkplain Writer#write(char[]) Writes} the supplied {@code
+   * char} array to the {@link Writer} supplied {@linkplain
+   * #TemplateOutputWriter(Writer) at construction time} and returns
+   * this {@link TemplateOutputWriter}.
+   *
+   * <p>This method never returns {@code null}.</p>
+   *
+   * @param c the {@code char} array in question; per the
+   * documentation for the {@link Writer#write(char[])} method,
+   * behavior is unspecified if this parameter is {@code null}
+   *
+   * @exception RuntimeException if any underlying {@link IOException}
+   * is thrown in keeping with the somewhat questionable design of
+   * {@link TemplateOutputStream}; examine its {@linkplain
+   * Throwable#getCause() root cause} for the causing {@link
+   * IOException}
+   *
+   * @see Writer#append(CharSequence)
+   */
   @Override
   public TemplateOutputStream append(final char[] c) {
     try {
@@ -72,6 +151,15 @@ public class TemplateOutputWriter implements TemplateOutputStream {
     return this;
   }
 
+  /**
+   * Returns {@code null} when invoked, following the undocumented
+   * practice and convention of the {@link StandardOutputStream}
+   * class.
+   *
+   * @return {@code null} when invoked
+   *
+   * @see StandardOutputStream#toString()
+   */
   @Override
   public String toString() {
     // The purpose of the toString() method of an arbitrary

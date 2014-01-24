@@ -33,19 +33,61 @@ import org.apache.maven.plugins.annotations.Component;
 
 import org.apache.maven.project.MavenProject;
 
+/**
+ * An {@link AbstractMojo} housing <a
+ * href="http://www.liquibase.org/">Liquibase</a> functionality.
+ *
+ * @author <a href="http://about.me/lairdnelson"
+ * target="_parent">Laird Nelson</a>
+ *
+ * @see AbstractMojo
+ *
+ * @see <a href="http://www.liquibase.org/">Liquibase</a>
+ */
 public abstract class AbstractLiquibaseMojo extends AbstractMojo {
 
+  /**
+   * The {@link MavenProject} currently in effect.
+   *
+   * <p>This field may be {@code null}.</p>
+   *
+   * @see #getProject()
+   *
+   * @see #setProject(MavenProject)
+   */
   @Component
   private MavenProject project;
 
+  /**
+   * Creates a new {@link AbstractLiquibaseMojo}.
+   */
   protected AbstractLiquibaseMojo() {
     super();
   }
 
+  /**
+   * Returns the {@link MavenProject} affiliated with this {@link
+   * AbstractLiquibaseMojo}.
+   *
+   * <p>This method may return {@code null}.</p>
+   *
+   * @return a {@link MavenProject}, or {@code null}
+   *
+   * @see #setProject(MavenProject)
+   */
   public MavenProject getProject() {
     return this.project;
   }
 
+  /**
+   * Affiliates the supplied {@link MavenProject} with this {@link
+   * AbstractLiquibaseMojo}.
+   *
+   * @param project the {@link MavenProject} to affiliate; may be
+   * {@code null}
+   *
+   * @see #getProject()
+   */
   public void setProject(final MavenProject project) {
     this.project = project;
   }
