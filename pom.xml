@@ -59,13 +59,6 @@
     </dependency>
 
     <dependency>
-      <groupId>com.h2database</groupId>
-      <artifactId>h2</artifactId>
-      <version>1.3.174</version>
-      <scope>test</scope>
-    </dependency>
-
-    <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
       <scope>test</scope>
@@ -134,11 +127,6 @@
 
   <properties>
     <mavenVersion>3.0.5</mavenVersion>
-
-    <testDatabaseConnectionURL>jdbc:h2:mem:test</testDatabaseConnectionURL>
-    <testDatabasePassword/>
-    <testDatabaseUser>sa</testDatabaseUser>
-    <testEclipseLinkLogging>finer</testEclipseLinkLogging>
 
     <!-- maven-compiler-plugin properties -->
     <maven.compiler.source>1.6</maven.compiler.source>

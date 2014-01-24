@@ -1,0 +1,177 @@
+<!-- -*- markdown -*- -->
+
+<h1>Usage</h1>
+
+This document describes different ways of using the
+`liquibase-maven-plugin` project.  For more details, please see the
+[Goals](plugin-info.html) page.
+
+<h2>Generic Plugin configuration information</h2>
+
+See the following links for information about including and configuring plugins in your project:
+  
+* [Configuring Plugins](http://maven.apache.org/guides/mini/guide-configuring-plugins.html)
+
+* [Plugin Development](http://maven.apache.org/guides/plugin/guide-java-plugin-development.html)
+
+* [Plugin Prefix Resolution](http://maven.apache.org/guides/introduction/introduction-to-plugin-prefix-mapping.html)
+
+<h2><tt>liquibase:assembleChangeLog</tt></h2>
+
+<h3>Summary</h3>
+
+The `liquibase:assembleChangeLog` goal constructs a [changelog][2]
+that [includes][3] other changelogs it finds in `test` scope (by
+default) throughout the project's transitive dependencies.  The
+changelogs that are included are included in dependency order.
+
+This allows you to notionally break what would otherwise be a giant,
+monolithic changelog into small, modular pieces, and allows those
+pieces to combine together in the proper dependency order at, for
+example, test time, such that foreign keys and other cross-module
+concerns continue to work properly.
+
+<h3>Getting Started</h3>
+
+The first step in getting started with the
+`liquibase:assembleChangeLog` goal is to organize your projects'
+changelogs properly in terms of dependency order.
+
+Next, you'll need to make sure they all have the same <i>classpath
+resource name</i>.
+
+Finally, you'll configure and run the `liquibase:assembleChangeLog`
+mojo/goal so that it will automatically discover all of these, sort
+them appropriately, and generate a master "aggregator" changelog that
+will [include][3] all the discovered fragments.
+
+For this example, we'll pretend that we have a `person`
+Maven project/artifact and an `address` Maven project/artifact that
+depends on the `person` artifact in `compile` scope.
+
+<h4>Organizing Changelogs in Dependency Order</h4>
+
+The `person` project, let's say, will need a changelog that creates a
+`person` table in a database somewhere.  Most notably, it will not
+create any address tables; we'll leave that up to the address module.
+
+Here's what it might look like:
+
+    <?xml version="1.0" encoding="UTF-8"?>
+    <databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	                   xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog 
+                                           http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.0.xsd">
+      <changeSet id="person:table_creation" author="ljnelson" logicalFilePath="person">
+        <createTable tableName="person">
+          <column name="id" type="bigint"/>
+        </createTable>
+        <addPrimaryKey columnNames="id"
+                       constraintName="person_pk"
+                       tableName="person"/>
+      </changeSet>
+    </databaseChangeLog>
+
+The `address` project, in turn, will need a changelog that creates an
+`address` table in a database somewhere, and, let's further suppose,
+will have a foreign key reference of some kind to a previously
+constructed `person` table.  Note that the `address` project will not
+take responsibility for creating this `person` table; it will only
+presuppose that such a table will already exist in the database by the
+time its own DDL activities begin.  Here's what it might look like:
+
+    <?xml version="1.0" encoding="UTF-8"?>
+    <databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	                   xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog 
+                                           http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.0.xsd">
+      <changeSet id="address:table_creation" author="ljnelson" logicalFilePath="address">
+        <createTable tableName="address">
+          <column name="id" type="bigint"/>
+          <column name="person_id" type="bigint">
+            <constraints nullable="false"/>
+          </column>
+        </createTable>
+        <addPrimaryKey columnNames="id"
+                       constraintName="address_pk"
+                       tableName="address"/>
+        <addForeignKeyConstraint baseColumnNames="person_id"
+                                 baseTableName="address"
+                                 constraintName="fk_address_person"
+                                 referencedColumnNames="id"
+                                 referencedTableName="person"/>
+      </changeSet>
+    </databaseChangeLog>
+
+<h4>Naming Changelog Fragments</h4>
+
+The changelogs in question will have to live in the artifacts produced
+by the projects in question, and, for the
+`liquibase:assembleChangeLog` mojo to be able to find them, will need
+to live in the same place in each `.jar` file, so that the plugin can
+discover them as classpath resources.
+
+A good candidate for this location is the `META-INF` directory.
+Within that directory, we'll place our [Liquibase][1] artifacts in a
+`liquibase` directory, and we'll call our changelogs `changelog.xml`.
+So the final classpath resource name of the changelogs used in this
+example will be `META-INF/liquibase/changelog.xml`.
+
+Consequently, we'll place `src/main/resources/META-INF/liquibase`
+directories in both the `person` and `address` Maven projects, and
+will take our two changelog files from above and place them in files
+named `src/main/resources/META-INF/liquibase/changelog.xml`.
+
+When we build these projects, the resulting `.jar` files will contain
+`META-INF/liquibase` directories at their root, with a single
+`changelog.xml` file in each.
+
+<h4>Configuring the <tt>liquibase:assembleChangeLog</tt> Mojo</h4>
+
+Now that we have two independent `.jar` files being produced by two
+Maven projects with Liquibase changelogs in them and a Maven
+dependency relationship between them but no other connection between
+them, we can set up the plugin to run.
+
+<h5>Deciding on a Build Phase</h5>
+
+The `liquibase:assembleChangeLog` mojo has several possible
+applications.  For this example, we'll build an aggregate changelog
+for integration testing.  Consequently, since we'll be generating a
+changelog for use at test time, we'll bind this mojo to the
+`generate-test-resources` phase.
+
+<h5>Activating the Mojo</h5>
+
+Here is what the basic plugin activation stanza looks like with no
+configuration information other than phase binding:
+
+    <plugin>
+      <groupId>com.edugility</groupId>
+      <artifactId>liquibase-maven-plugin</artifactId>
+      <version>${project.version}</version>
+      <executions>
+        <execution>
+          <id>Assemble aggregate changelog for integration testing</id>
+          <phase>generate-test-resources</phase>
+          <goals>
+            <goal>assembleChangeLog</goal>
+          </goals>
+        </execution>
+      </executions>
+    </plugin>
+
+Many configuration parameters (as described in the
+[reference documentation][4]) have sensible default values.
+Consequently, the configuration above will (conveniently enough!) look
+for changelog resources stored under the [classpath resource name][6]
+of `META-INF/liquibase/changelog.xml`, and will write its
+[output file][5] to
+`\${project.build.directory}/generated-sources/liquibase/changelog.xml`.
+
+[1]: http://www.liquibase.org/
+[2]: http://www.liquibase.org/documentation/databasechangelog.html
+[3]: http://www.liquibase.org/documentation/include.html
+[4]: assembleChangeLog-mojo.html
+[5]: assembleChangeLog-mojo.html#outputFile
+[6]: assembleChangeLog-mojo.html#changeLogResourceNames

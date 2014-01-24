@@ -5,10 +5,15 @@ Welcome to the `${project.artifactId}` project.
 `${project.artifactId}` is a [Maven][1] [plugin][2] that provides
 goals for working with [Liquibase][3].
 
+# Usage
+
+Please see the [Usage][6] page for a mini-tutorial on getting started
+with this project.
+
 # Goals
 
 The best way to see what this plugin exposes is to look at the
-[goals][4] page.
+[Goals][4] page.
 
 # API Documentation
 
@@ -20,3 +25,4 @@ get started.
 [3]: http://www.liquibase.org/
 [4]: plugin-info.html
 [5]: apidocs/index.html
+[6]: usage.html

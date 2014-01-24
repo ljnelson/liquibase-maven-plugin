@@ -88,9 +88,11 @@ import org.mvel2.templates.TemplateRuntime;
 
 /**
  * Scans the test classpath in dependency order for <a
- * href="http://www.liquibase.org/">Liquibase</a> changelog fragments
- * and assembles a master changelog that includes them all in
- * dependency order.
+ * href="http://www.liquibase.org/">Liquibase</a> <a
+ * href="http://www.liquibase.org/documentation/databasechangelog.html">changelog</a>
+ * fragments and assembles a master changelog that <a
+ * href="http://www.liquibase.org/documentation/include.html">includes</a>
+ * them all in dependency order.
  *
  * @author <a href="http://about.me/lairdnelson"
  * target="_parent">Laird Nelson</a>
