@@ -8,7 +8,7 @@
 
   <groupId>com.edugility</groupId>
   <artifactId>liquibase-maven-plugin</artifactId>
-  <version>1.0.0</version>
+  <version>1.0.1-SNAPSHOT</version>
   <packaging>maven-plugin</packaging>
 
   <parent>
@@ -26,7 +26,7 @@
     <connection>scm:git:git@github.com:ljnelson/${project.artifactId}.git</connection>
     <developerConnection>scm:git:git@github.com:ljnelson/${project.artifactId}.git</developerConnection>
     <url>https://github.com/ljnelson/${project.artifactId}/</url>
-    <tag>liquibase-maven-plugin-1.0.0</tag>
+    <tag>HEAD</tag>
   </scm>
 
   <dependencies>
