@@ -912,7 +912,7 @@ public class AssembleChangeLogMojo extends AbstractLiquibaseMojo {
     }
     final File parent = this.outputFile.getParentFile();
     if (parent != null) {
-      if (!parent.mkdirs()) {
+      if (!parent.exists() && !parent.mkdirs()) {
         throw new IOException("Could not create parent directory chain for " + this.outputFile);
       }
     }
